@@ -1,4 +1,4 @@
-🤖 AI Customer Support Assistant (OpenEnv Project)
+<img width="1389" height="822" alt="screenshot png" src="https://github.com/user-attachments/assets/a1ea261b-ef25-40b4-9150-a03c92ec7c93" />🤖 AI Customer Support Assistant (OpenEnv Project)
 
 📌 Overview
 
@@ -72,7 +72,8 @@ ai-support-assistant/
 ├── server.py           # FastAPI backend
 ├── streamlit_app.py    # User interface
 ├── requirements.txt    # Dependencies
-├── README.md           # Documentation
+├── README.md  
+├──task.py
 └── .gitignore          # Ignore unnecessary files
 
 ---
@@ -102,6 +103,8 @@ streamlit run streamlit_app.py
 5. Score is assigned (+1 / -1)
 6. Results are displayed to the user
 
+Demo:
+screenshot file added (screenshot.png}
 
 ✅ Example Output
 
