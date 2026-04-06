@@ -1,35 +1,42 @@
 import streamlit as st
-from inference import process_query
-st.set_page_config(
-    page_title="AI Support Assistant",
-    page_icon="🤖"
-)
+from inference import process_query  # 🔥 correct import
 
-st.title("🤖 AI Customer Support")
-st.write("Ask your question and get instant help.")
-# User input
-user_input = st.text_input("Type your query here:")
-# Button click action
-if st.button("Get Response"):
+# 🔹 Page config
+st.set_page_config(page_title="AI Customer Support", page_icon="🤖", layout="centered")
+
+# 🔹 Title
+st.title("🤖 AI Customer Support System")
+st.markdown("Enter your query and get AI-generated response with category, priority, and score.")
+
+# 🔹 Input box
+user_input = st.text_input("💬 Enter your query:")
+
+# 🔹 Button
+if st.button("Submit"):
 
     if user_input.strip() == "":
-        st.warning("Please enter something first.")
+        st.warning("⚠️ Please enter a query")
     else:
-        result = process_query(user_input)
+        try:
+            # 🔥 Direct function call (NO FastAPI)
+            data = process_query(user_input)
 
-        st.divider()
-        # Show response
-        st.subheader("Response")
-        st.write(result["response"])
-        # Show details
-        st.subheader("Details")
+            # 🔹 Display results
+            st.subheader("📊 Results")
 
-        col1, col2, col3 = st.columns(3)
+            st.success(f"🤖 Response: {data['response']}")
+            st.info(f"📂 Category: {data['category']}")
+            st.warning(f"⚡ Priority: {data['priority']}")
 
-        col1.write(f"**Category:** {result['category']}")
-        col2.write(f"**Priority:** {result['priority']}")
+            # 🔹 Score display
+            if data["score"] == 1:
+                st.success(f"✅ Score: {data['score']} (Good Response)")
+            else:
+                st.error(f"❌ Score: {data['score']} (Needs Improvement)")
 
-        if result["score"] == 1:
-            col3.write("**Score:** +1 ✅")
-        else:
-            col3.write("**Score:** -1 ❌")
+        except Exception as e:
+            st.error(f"🚫 Error: {str(e)}")
+
+# 🔹 Footer
+st.markdown("---")
+st.caption("Built using Streamlit + Custom AI Logic")
