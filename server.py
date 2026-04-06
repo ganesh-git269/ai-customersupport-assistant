@@ -1,40 +1,55 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
-from inference import reset, step, state
+from fastapi.responses import HTMLResponse
+from inference import run
 
-app = FastAPI(title="CustomerSupportEnv")
+# ✅ IMPORTANT: app must be named 'app'
+app = FastAPI(title="AI Customer Support System")
 
 
-# 🔹 Input schema for step
+# 🔹 Input model
 class UserInput(BaseModel):
     user_input: str
 
 
-# 🔹 Home route
-@app.get("/web")
+# 🔥 Home page
+@app.get("/", response_class=HTMLResponse)
 def home():
-    return {"message": "Customer Support Environment Running"}
+    return """
+    <html>
+        <body style="text-align:center; font-family:Arial;">
+            <h1>🤖 AI Customer Support System</h1>
+
+            <br>
+
+            <a href="/docs">
+                <button style="padding:10px 20px;">API Docs</button>
+            </a>
+
+            <br><br>
+
+            <a href="https://github.com/ganesh-git269/ai-customersupport-assistant">
+                <button style="padding:10px 20px;">GitHub Repo</button>
+            </a>
+        </body>
+    </html>
+    """
 
 
-# 🔹 Reset API
+# 🔹 Reset endpoint
 @app.post("/reset")
-def reset_env():
-    return reset()
+def reset():
+    return {"message": "Environment reset successful"}
 
 
-# 🔹 Step API
+# 🔹 Step endpoint
 @app.post("/step")
-def step_env(input_data: UserInput):
-    return step(input_data.user_input)
+def step(input_data: UserInput):
+    result = run(input_data.user_input)
+    return result
 
 
-# 🔹 Get current state
+# 🔹 State endpoint
 @app.get("/state")
-def get_state():
-    return state
-
-
-# 🔹 Health check
-@app.get("/health")
-def health():
-    return {"status": "ok"}
+def state():
+    return {"status": "running"}
