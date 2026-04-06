@@ -1,4 +1,26 @@
+import os
 import random
+
+# 🔹 Environment Variables (required for checklist)
+API_BASE_URL = os.getenv("API_BASE_URL", "")
+MODEL_NAME = os.getenv("MODEL_NAME", "")
+HF_TOKEN = os.getenv("HF_TOKEN")  # ❗ no default
+
+# 🔹 Global State (OpenEnv style)
+state = {}
+
+# 🔹 Reset Function
+def reset():
+    global state
+    print("START")
+    state = {
+        "input": "",
+        "response": "",
+        "category": "",
+        "priority": "",
+        "score": 0
+    }
+    return state
 
 
 # 🔹 AI Response Generator
@@ -36,13 +58,10 @@ def classify_category(user_input):
 
     if "refund" in text or "payment" in text:
         return "billing"
-
     elif "order" in text:
         return "order"
-
     elif "password" in text or "login" in text:
         return "account"
-
     else:
         return "general"
 
@@ -51,66 +70,52 @@ def classify_category(user_input):
 def assign_priority(user_input):
     text = user_input.lower()
 
-    if "urgent" in text or "immediately" in text or "money" in text or "delay"  in text or "order" in text or "refund" in text:
+    if any(word in text for word in ["urgent", "immediately", "money", "delay", "order", "refund"]):
         return "high"
-
-    elif   "late" in text:
+    elif "late" in text:
         return "medium"
-
     else:
         return "low"
 
 
-# 🔹 Smart Scoring (FINAL FIX)
+# 🔹 Smart Scoring
 def calculate_score(response_text):
     text = response_text.lower()
 
-    # ❌ Bad responses
-    bad_words = [
-        "not sure",
-        "don't know",
-        "cannot",
-        "unable",
-        "provide more details"
-    ]
-
-    for word in bad_words:
-        if word in text:
-            return -1
-
-    # ✅ Good responses
-    good_words = [
-        "successfully",
-        "initiated",
-        "processed",
-        "resolved",
-        "will",
-        "assist",
-        "help"
-    ]
-
-    for word in good_words:
-        if word in text:
-            return 1
-
-    # ⚖️ Neutral → based on length
-    if len(text) > 60:
-        return 1
-    else:
+    bad_words = ["not sure", "don't know", "cannot", "unable", "provide more details"]
+    if any(word in text for word in bad_words):
         return -1
 
+    good_words = ["successfully", "initiated", "processed", "resolved", "will", "assist", "help"]
+    if any(word in text for word in good_words):
+        return 1
 
-# 🔹 Main Function
+    return -1
+
+
+# 🔹 MAIN FUNCTION (used by Streamlit)
 def process_query(user_input):
+    print("START: Processing query")
+
+    reset()
+
+    print("STEP: Generating response")
     response = get_ai_response(user_input)
+
+    print("STEP: Classifying category")
     category = classify_category(user_input)
+
+    print("STEP: Assigning priority")
     priority = assign_priority(user_input)
+
+    print("STEP: Calculating score")
     score = calculate_score(response)
 
+    print("END: Done")
+
     return {
-        "input": user_input,
+        "response": response,
         "category": category,
         "priority": priority,
-        "response": response,
         "score": score
     }
