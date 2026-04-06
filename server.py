@@ -1,21 +1,40 @@
 from fastapi import FastAPI
-from inference import process_query
 from pydantic import BaseModel
+from inference import reset, step, state
+
+app = FastAPI(title="CustomerSupportEnv")
 
 
-app = FastAPI()
+# 🔹 Input schema for step
+class UserInput(BaseModel):
+    user_input: str
 
 
-# 🔹 Create input model (THIS FIXES YOUR PROBLEM)
-class Query(BaseModel):
-    input: str
-
-
-@app.get("/")
+# 🔹 Home route
+@app.get("/web")
 def home():
-    return {"message": "Server is running"}
+    return {"message": "Customer Support Environment Running"}
 
 
-@app.post("/run")
-def run_ai(data: Query):
-    return process_query(data.input)
+# 🔹 Reset API
+@app.post("/reset")
+def reset_env():
+    return reset()
+
+
+# 🔹 Step API
+@app.post("/step")
+def step_env(input_data: UserInput):
+    return step(input_data.user_input)
+
+
+# 🔹 Get current state
+@app.get("/state")
+def get_state():
+    return state
+
+
+# 🔹 Health check
+@app.get("/health")
+def health():
+    return {"status": "ok"}
