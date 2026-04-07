@@ -1,0 +1,10 @@
+name: ai-customer-support
+version: 1.0
+
+entrypoint: server:app
+
+description: AI Customer Support System using FastAPI
+
+endpoints:
+  - /reset
+  - /step
