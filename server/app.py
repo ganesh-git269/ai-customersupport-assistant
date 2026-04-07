@@ -48,7 +48,7 @@ def step_env(input_data: UserInput):
 
     return {
         "observation": result,
-        "reward": result["score"],
+        "reward": result.get("score", 0),  # safer
         "done": False,
         "info": {}
     }
@@ -60,10 +60,12 @@ def state():
     return {"status": "running"}
 
 
+# ✅ REQUIRED MAIN FUNCTION FOR OPENENV
 def main():
     import uvicorn
-    uvicorn.run("server.app:app", host="0.0.0.0", port=7860)
+    uvicorn.run(app, host="0.0.0.0", port=7860)
 
 
+# ✅ LOCAL RUN
 if __name__ == "__main__":
     main()
