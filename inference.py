@@ -1,10 +1,16 @@
 import os
-import random
+from openai import OpenAI
 
-# 🔹 Environment Variables
-API_BASE_URL = os.getenv("API_BASE_URL", "")
-MODEL_NAME = os.getenv("MODEL_NAME", "")
-HF_TOKEN = os.getenv("HF_TOKEN")
+# 🔹 Safe API Initialization (works locally + OpenEnv)
+api_key = os.environ.get("API_KEY")
+base_url = os.environ.get("API_BASE_URL")
+
+client = None
+if api_key and base_url:
+    client = OpenAI(
+        base_url=base_url,
+        api_key=api_key
+    )
 
 # 🔹 Global State
 state = {}
@@ -16,7 +22,6 @@ def reset():
 
     task_name = "customer_support"
 
-    # ✅ START BLOCK
     print(f"[START] task={task_name}", flush=True)
 
     state = {
@@ -27,39 +32,28 @@ def reset():
         "score": 0
     }
 
-    # ✅ END BLOCK
     print(f"[END] task={task_name} score=0 steps=0", flush=True)
 
     return state
 
 
-# 🔹 AI Response Generator
+# 🔹 AI Response (API + fallback)
 def get_ai_response(user_input):
-    text = user_input.lower()
+    if client:
+        try:
+            response = client.chat.completions.create(
+                model=os.environ.get("MODEL_NAME", "gpt-4o-mini"),
+                messages=[
+                    {"role": "system", "content": "You are a helpful customer support assistant."},
+                    {"role": "user", "content": user_input}
+                ]
+            )
+            return response.choices[0].message.content
+        except Exception:
+            pass
 
-    if "refund" in text:
-        return "Your refund request has been successfully initiated. You will receive the amount within 3-5 business days."
-
-    elif "order" in text and "delay" in text:
-        return "We apologize for the delay. Your order is on the way and will reach you soon."
-
-    elif "order" in text:
-        return "Your order has been placed successfully and is being processed."
-
-    elif "password" in text or "login" in text:
-        return "You can reset your password using the 'Forgot Password' option on the login page."
-
-    elif "payment" in text:
-        return "Your payment was successful. If any issue persists, please contact support."
-
-    else:
-        responses = [
-            "I'm not sure about that. Could you please provide more details?",
-            "I don't have enough information to help with this.",
-            "Not sure how to answer that. Please clarify your question.",
-            "Please explain your concern so we can assist better."
-        ]
-        return random.choice(responses)
+    # 🔸 Fallback (local execution)
+    return "Your request has been received and is being processed."
 
 
 # 🔹 Category Classification
@@ -109,7 +103,6 @@ def process_query(user_input):
 
     task_name = "customer_support"
 
-    # ✅ START
     print(f"[START] task={task_name}", flush=True)
 
     state["input"] = user_input
@@ -126,16 +119,13 @@ def process_query(user_input):
         "score": score
     })
 
-    # ✅ STEP
     print(f"[STEP] step=1 reward={score}", flush=True)
-
-    # ✅ END
     print(f"[END] task={task_name} score={score} steps=1", flush=True)
 
     return state
 
 
-# 🔥 IMPORTANT: for direct execution (Phase 2 runner)
+# 🔥 Execution block (for local run / Phase 2)
 if __name__ == "__main__":
     reset()
     process_query("I want a refund for my order")
