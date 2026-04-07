@@ -1,7 +1,2 @@
-[project]
-name = "ai-customer-support"
-version = "1.0.0"
-description = "AI Customer Support System"
-
 [tool.openenv]
 entrypoint = "server:app"
