@@ -1,0 +1,2 @@
+[tool.openenv]
+entrypoint = "server:app"
