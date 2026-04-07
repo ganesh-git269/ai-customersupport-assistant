@@ -9,10 +9,15 @@ HF_TOKEN = os.getenv("HF_TOKEN")
 # 🔹 Global State
 state = {}
 
+
 # 🔹 Reset Function
 def reset():
     global state
-    print("START")
+
+    task_name = "customer_support"
+
+    # ✅ START BLOCK
+    print(f"[START] task={task_name}", flush=True)
 
     state = {
         "input": "",
@@ -22,7 +27,9 @@ def reset():
         "score": 0
     }
 
-    print("END")
+    # ✅ END BLOCK
+    print(f"[END] task={task_name} score=0 steps=0", flush=True)
+
     return state
 
 
@@ -96,24 +103,20 @@ def calculate_score(response_text):
     return -1
 
 
-# 🔥 MAIN FUNCTION (IMPORTANT)
+# 🔥 MAIN FUNCTION (OPENENV REQUIRED)
 def process_query(user_input):
     global state
 
-    print("START")
+    task_name = "customer_support"
+
+    # ✅ START
+    print(f"[START] task={task_name}", flush=True)
 
     state["input"] = user_input
 
-    print("STEP: Generating response")
     response = get_ai_response(user_input)
-
-    print("STEP: Classifying category")
     category = classify_category(user_input)
-
-    print("STEP: Assigning priority")
     priority = assign_priority(user_input)
-
-    print("STEP: Calculating score")
     score = calculate_score(response)
 
     state.update({
@@ -123,6 +126,16 @@ def process_query(user_input):
         "score": score
     })
 
-    print("END")
+    # ✅ STEP
+    print(f"[STEP] step=1 reward={score}", flush=True)
+
+    # ✅ END
+    print(f"[END] task={task_name} score={score} steps=1", flush=True)
 
     return state
+
+
+# 🔥 IMPORTANT: for direct execution (Phase 2 runner)
+if __name__ == "__main__":
+    reset()
+    process_query("I want a refund for my order")
