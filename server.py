@@ -1,9 +1,9 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
 from fastapi.responses import HTMLResponse
-from inference import run
+from inference import process_query, reset
 
-# ✅ IMPORTANT: app must be named 'app'
+# ✅ IMPORTANT
 app = FastAPI(title="AI Customer Support System")
 
 
@@ -36,17 +36,16 @@ def home():
     """
 
 
-# 🔹 Reset endpoint
+# 🔹 Reset endpoint (FIXED)
 @app.post("/reset")
-def reset():
-    return {"message": "Environment reset successful"}
+def reset_env():
+    return reset()
 
 
-# 🔹 Step endpoint
+# 🔹 Step endpoint (FIXED)
 @app.post("/step")
-def step(input_data: UserInput):
-    result = run(input_data.user_input)
-    return result
+def step_env(input_data: UserInput):
+    return process_query(input_data.user_input)
 
 
 # 🔹 State endpoint
