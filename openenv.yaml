@@ -1,7 +1,7 @@
 name: ai-customer-support
-description: AI Customer Support Assistant using OpenEnv
+description: AI Customer Support Assistant
 
-entrypoint: server.app:app
+entrypoint: server.app:main
 
 interfaces:
   reset: /reset
