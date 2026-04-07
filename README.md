@@ -1,119 +1,157 @@
-<img width="1389" height="822" alt="screenshot png" src="https://github.com/user-attachments/assets/a1ea261b-ef25-40b4-9150-a03c92ec7c93" />🤖 AI Customer Support Assistant (OpenEnv Project)
+🤖 AI Customer Support Assistant (OpenEnv Compatible)
 
 📌 Overview
 
-This project is an AI-powered customer support system designed to simulate real-world customer service tasks.
-It can understand user queries, generate meaningful responses, classify the issue, assign priority, and evaluate the response quality.
+This project is a simple AI-powered customer support system that simulates real-world customer queries and generates automated responses. It is built following the OpenEnv specification, making it suitable for environments like the Scalar Hackathon.
 
----
-
-🎯 Problem Statement
-
-Customer support teams handle a large number of repetitive queries daily.
-This project automates that process using AI to:
-
-- Respond instantly to user queries
-- Categorize issues
-- Prioritize requests
-- Evaluate response quality
+The system processes user queries, classifies them, assigns priority, generates responses, and evaluates the response quality.
 
 ---
 
 🚀 Features
 
-- 🧠 AI-generated human-like responses
-- 📂 Automatic category classification
-- ⚡ Priority assignment (High / Medium / Low)
-- 📊 Response evaluation with scoring (+1 / -1)
-- 💻 Interactive UI using Streamlit
+- 🔹 AI-like response generation (rule-based simulation)
+- 🔹 Query classification (billing, order, account, general)
+- 🔹 Priority assignment (high, medium, low)
+- 🔹 Response evaluation with reward scoring (+1 / -1)
+- 🔹 OpenEnv compliant API:
+  - "/reset"
+  - "/step"
+  - "/state"
 
 ---
 
-🧠 OpenEnv Implementation
+🧠 How It Works
 
-🔹 Task
+1. User sends a query
+2. System:
+   - Generates response
+   - Classifies category
+   - Assigns priority
+   - Calculates reward score
+3. Returns structured output in OpenEnv format
 
-AI-based Customer Support Assistant
+---
 
-🔹 Observation
+📂 Project Structure
 
-User input (customer query)
+.
+├── inference.py
+├── Dockerfile
+├── requirements.txt
+├── pyproject.toml
+├── uv.lock
+└── server/
+    └── app.py
 
-🔹 Action
+---
 
-System generates:
+⚙️ Installation & Run (Local)
 
-- Response to the query
-- Category (billing, order, account, general)
-- Priority level
+Step 1: Install dependencies
 
-🔹 Reward
+pip install fastapi uvicorn pydantic openenv-core
 
-Score based on response quality:
+Step 2: Run server
 
-- +1 → Helpful / polite response
-- -1 → Generic / unclear response
+python -m uvicorn server.app:app --reload
+
+Step 3: Open API Docs
+
+http://127.0.0.1:8000/docs
+
+---
+
+📡 API Endpoints
+
+🔹 Reset Environment
+
+"POST /reset"
+
+Resets the system state.
+
+---
+
+🔹 Step Execution
+
+"POST /step"
+
+Request:
+
+{
+  "user_input": "refund my money"
+}
+
+Response:
+
+{
+  "observation": {
+    "input": "refund my money",
+    "category": "billing",
+    "priority": "high",
+    "response": "Your refund request has been successfully initiated.",
+    "score": 1
+  },
+  "reward": 1,
+  "done": false,
+  "info": {}
+}
+
+---
+
+🔹 Get State
+
+"GET /state"
+
+Returns current environment status.
+
+---
+
+🎯 Scoring Logic
+
+- ✅ +1 → Helpful / confident responses
+- ❌ -1 → Uncertain / unclear responses
 
 ---
 
 🛠️ Tech Stack
 
 - Python
-- FastAPI (Backend API)
-- Streamlit (Frontend UI)
+- FastAPI
+- Uvicorn
+- Pydantic
+- OpenEnv
 
 ---
 
-📁 Project Structure
+🌐 Deployment
 
-ai-support-assistant/
-│
-├── inference.py        # AI logic
-├── server.py           # FastAPI backend
-├── streamlit_app.py    # User interface
-├── requirements.txt    # Dependencies
-├── README.md  
-├──task.py
-└── .gitignore          # Ignore unnecessary files
+This project is deployed using:
+
+- Hugging Face Spaces (Docker)
+- GitHub Repository
 
 ---
 
-⚙️ Installation & Setup
+📌 Use Case
 
-1️⃣ Install dependencies
+This system simulates real-world tasks like:
 
-pip install -r requirements.txt
-
-2️⃣ Run backend server
-
-uvicorn server:app --reload
-
-3️⃣ Run frontend UI
-
-streamlit run streamlit_app.py
+- Customer support automation
+- Query classification
+- AI response evaluation
 
 ---
 
-🌐 How It Works
+🙌 Conclusion
 
-1. User enters a query in the UI
-2. Backend processes the query
-3. AI generates a response
-4. System classifies category & priority
-5. Score is assigned (+1 / -1)
-6. Results are displayed to the user
+This project demonstrates how AI-based systems can automate customer support tasks while following standardized environment protocols like OpenEnv.
 
-Demo:
-screenshot file added (screenshot.png}
+---
 
-✅ Example Output
+🔗 Links
 
-- Input: "My order is delayed"
-- Category: Order
-- Priority: Medium
-- Response: "We apologize for the delay..."
-- Score: +1
+- GitHub Repo: (Add your link here)
+- Hugging Face Space: (Add your link here)
 
-- 
-🔥 Conclusion
-This project demonstrates how AI can be used to automate customer support tasks efficiently while maintaining response quality and structured evaluation using OpenEnv principles.
+---
